@@ -36,5 +36,5 @@ passwd -e ${USER_NAME}
 
 # Display informations about the user created. 
 echo '---- USER CREATED ----'
-echo -e "User name: ${USER_NAME}\nPassword: ${PASSWORD}\nHostname: $(hostname)"
+echo -e "User name: ${USER_NAME}\nPassword: ${PASSWORD}\nHostname: ${HOSTNAME}"
 
