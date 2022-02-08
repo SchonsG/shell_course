@@ -3,3 +3,6 @@ Vagrantfile
 .vagrant
 *.log
 
+# Files/folder from course (reference)
+course_content
+
