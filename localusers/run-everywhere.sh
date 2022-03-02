@@ -20,6 +20,8 @@ log() {
 }
 
 SERVER_FILE='/vagrant/servers'
+SSH_OPTIONS='-o ConnectTimeout=2'
+EXIT_STATUS='0'
 
 # Check if was executed as root.
 if [[ "${UID}" -eq '0' ]]
@@ -57,8 +59,36 @@ then
   exit 1
 fi
 
+if [[ "${DRY_RUN}" = 'true' ]]
+then
+  PREFIX='echo DRY RUN: '
+fi
+
+if [[ "${SUDO_RUN}" = 'true' ]]
+then
+  PRIVILEGE='sudo'
+fi
+
 for SERVER in $(cat ${SERVER_FILE})
 do
-  echo ${SERVER}
+  log "Executing ${COMMAND} in ${SERVER}"
+
+  SSH_COMMAND="ssh ${SSH_OPTIONS} ${SERVER} ${PRIVILEGE} ${COMMAND}"
+
+  if [[ "${DRY_RUN}" = 'true' ]]
+  then
+    echo "DRY RUN: ${SSH_COMMAND}"
+  else
+    ${SSH_COMMAND}
+    SSH_EXIT_STATUS="${?}"
+  fi
+
+  if [[ ${SSH_EXIT_STATUS} -ne '0' ]]
+  then
+    EXIT_STATUS="${SSH_EXIT_STATUS}"
+    echo "Execution on ${SERVER} failed." >&2
+  fi
 done
+
+exit ${EXIT_STATUS}
 
